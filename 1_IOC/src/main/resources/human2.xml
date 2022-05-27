@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<bean class="edu.biz.spel2.HumanApp2" id="humanApp2">
+		<property name="list">
+			<list>
+				<value>가</value>
+				<value>A</value>
+				<value>1</value>
+			</list>
+		</property>
+		<property name="set" ref="mySet" />
+		<property name="map">
+			<map>
+				<entry>
+					<key><value>가</value></key>
+					<value>1</value>
+				</entry>
+				<entry key="나" value="10" />
+			</map>
+		</property>
+		<property name="properties">
+			<props>
+				<prop key="키">값</prop>
+				<prop key="키2">값2</prop>
+				<prop key="키3">값3</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<util:set id="mySet">
+		<value>셋1</value>
+		<value>셋2</value>
+		<value>셋3</value>
+	</util:set>
+</beans>

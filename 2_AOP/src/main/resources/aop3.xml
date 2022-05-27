@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="edu.biz.aop3.MyAdvice" id="myAdvice"></bean>
+	<bean class="edu.biz.aop3.MyDependency" id="myDependency"/>
+	<bean class="edu.biz.aop3.MyBean" p:dependency-ref="myDependency1" id="myBean1"/>
+	<bean class="edu.biz.aop3.MyBean" p:dependency-ref="myDependency2" id="myBean2"/>
+	
+	<bean class="org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor" id="advisor">
+		<property name="advice" ref="myAdvice"/>
+		<property name="pointcut">
+			<bean class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+				<property name="expression" value="execution(* hello(..))"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="org.springframework.aop.framework.ProxyFactoryBean" id="myDependency1">
+		<property name="target" ref="myDependency"/>
+		<property name="interceptorNames">
+			<list><value>myAdvice</value></list>
+		</property>
+	</bean>
+	<bean class="org.springframework.aop.framework.ProxyFactoryBean" id="myDependency2">
+		<property name="target" ref="myDependency"/>
+		<property name="interceptorNames">
+			<list><value>advisor</value></list>
+		</property>
+	</bean>
+</beans>

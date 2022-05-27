@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="edu.biz.magic.Magician">
+		<property name="magicWord" value="수리수리 마수리" />
+		<property name="magicBox">
+			<bean class="edu.biz.magic.MagicBoxImpl">
+				<replaced-method name="getContent" replacer="tiger" />
+			</bean>	
+		</property>
+	</bean>
+	
+	<bean class="edu.biz.magic.Tiger" id="tiger" />
+</beans>

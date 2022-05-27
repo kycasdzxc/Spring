@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 
+	setter injection
+	<bean class="edu.blz.ioc3.Money" id="money">
+		<property name="amount">
+			<value>2000</value>
+		</property>
+	</bean> -->
+	
+	
+	<!--
+	constructor injection 	
+	<bean class="edu.blz.ioc3.Money" id="money">
+		<constructor-arg>
+			<value>2000</value>
+		</constructor-arg>
+	</bean> -->
+	
+	<!-- 	
+	namespace 활용한 injection
+	<bean class="edu.blz.ioc3.Money" id="money" p:amount="2000" /> -->
+	<bean class="edu.biz.ioc3.Money" id="money" c:amount="2000" />
+	
+	<bean class="edu.biz.ioc3.Car" id="car">
+		<property name="name">
+			<value>k7</value>
+		</property>
+	</bean>
+	
+	<bean class="edu.biz.ioc3.KiaMaker" id="kiaMaker" p:car-ref="car">
+<!-- 		<property name="car">
+			<ref bean="car" />
+		</property> -->
+	</bean>
+	
+	<bean class="edu.biz.ioc3.HyunDaiMaker" id="hyunDaiMaker">
+		<property name="car">
+			<bean class="edu.biz.ioc3.Car">
+				<property name="name" value="sonata" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="edu.biz.ioc3.DaewooMaker" id="daewooMaker">
+		<property name="car">
+			<bean class="edu.biz.ioc3.Car">
+				<property name="name" value="tosca" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="java.lang.String" id="tosca" >
+		<constructor-arg value="tosca" />
+	</bean>
+	
+	<bean class="edu.biz.ioc3.OrderManager" id="orderManager" scope="prototype">
+		<property name="maker">
+			<ref bean="hyunDaiMaker" />
+		</property>
+		<property name="money">
+			<ref bean="money" />
+		</property>
+	</bean>
+	
+</beans>

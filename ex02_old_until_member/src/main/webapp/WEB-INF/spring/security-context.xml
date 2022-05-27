@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder"/>
+	<bean class="works.yermi.security.CustomUserDetailsService" id="userDetailsService" />
+	<security:http>
+		<security:form-login login-page="/member/login" />
+		<security:logout logout-url="/logout" logout-success-url="/" />
+		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/sample/all" access="permitAll" />
+		<security:intercept-url pattern="/sample/member" access="hasAnyRole('ROLE_MEMBER', 'ROLE_MANAGER')" />
+		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')" />
+		<security:remember-me data-source-ref="dataSource"/>
+	</security:http>
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="userDetailsService">
+			<!-- <security:user-service>
+				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+				<security:user name="javaman" password="{noop}1234" authorities="ROLE_MEMBER"/>
+			</security:user-service> -->
+			<!-- <security:jdbc-user-service data-source-ref="dataSource" 
+			users-by-username-query="SELECT USERID USERNAME, USERPW PASSWORD, ENABLED FROM TBL_MEMBER WHERE USERID = ?" 
+			authorities-by-username-query="SELECT USERID USERNAME, AUTH AUTHORITY FROM TBL_MEMBER_AUTH WHERE USERID = ?"
+			/>	 -->		
+			<security:password-encoder ref="passwordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>

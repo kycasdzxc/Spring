@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+	<!-- advice -->
+	<bean class="edu.biz.smallMart.advice.BeforeLog" id="beforeLog"></bean>
+	
+	<!-- pointcut -->
+	<bean class="org.springframework.aop.aspectj.AspectJExpressionPointcut" id="pc">
+		<property name="expression" value="execution(* *2(..))"/>
+	</bean>
+	
+	<!-- advisor -->
+	<bean class="org.springframework.aop.support.DefaultPointcutAdvisor" id="pointcutAdvisor">
+		<property name="advice" ref="beforeLog"/>
+		<property name="pointcut" ref="pc"/>
+	</bean>
+	
+	<!-- proxy -->
+	<bean class="org.springframework.aop.framework.ProxyFactoryBean" id="mart2">
+		<property name="target">
+			<!-- target -->
+			<bean class="edu.biz.smallMart2.SmallMartImpl"></bean>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>pointcutAdvisor</value>
+			</list>
+		</property>
+	</bean>
+</beans>

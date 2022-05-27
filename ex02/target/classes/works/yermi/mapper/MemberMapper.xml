@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="works.yermi.mapper.MemberMapper">
+
+	<insert id="insertMember">
+		INSERT INTO TBL_MEMBER(USERID, USERPW, USERNAME)
+		VALUES (#{userid}, #{userpw}, #{username})
+	</insert>
+	
+	<insert id="insertAuth">
+		INSERT INTO TBL_MEMBER_AUTH(USERID, AUTH)
+		VALUES (#{userid}, #{auth})
+	</insert>
+	
+	<resultMap type="member" id="memberMap">
+		<id property="userid" column="userid" />
+		<result property="userid" column="userid" />
+		<result property="userpw" column="userpw" />
+		<result property="username" column="username" />
+		<result property="regDate" column="regdate" />
+		<result property="updateDate" column="updatedate" />
+		<result property="enabled" column="enabled" />
+		<collection property="auths" resultMap="authMap" />
+	</resultMap>
+	
+	<resultMap type="auth" id="authMap">
+		<result property="userid" column="userid" />
+		<result property="auth" column="auth" />
+	</resultMap>
+	
+	<select id="read" resultMap="memberMap">
+		SELECT *
+		FROM TBL_MEMBER
+		JOIN TBL_MEMBER_AUTH
+		USING(USERID)
+		WHERE USERID = #{userid}
+	</select>
+	
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<aop:config>
+		<aop:aspect ref="smallMartAdvice">
+			<aop:pointcut expression="execution(* *2(..))" id="pc"/>
+			<aop:before method="smallBefore" pointcut-ref="pc"/>
+			<aop:before method="smallBefore" pointcut-ref="pc"/>
+			<aop:before method="adv" pointcut-ref="pc"/>
+			<aop:after method="adv" pointcut-ref="pc"/>
+			<aop:after-returning method="adv" pointcut-ref="pc"/>
+			
+			<aop:pointcut expression="execution(* *(..))" id="pc2"/>
+			<aop:before method="logging" pointcut-ref="pc2"/>
+		</aop:aspect>
+	</aop:config>
+	
+	<bean class="edu.biz.smallMart3.SmallMartAdvice" id="smallMartAdvice" />
+	<bean class="edu.biz.smallMart3.SmallMartImpl" id="mart" />
+</beans>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="works.yermi.mapper.BoardMapper">
+	<sql id="cri"> <!-- 변수처럼 만들어서 활용 -->
+		<!-- <if test="typeArr != null"> -->
+		<trim prefix=" (" suffix=") AND" prefixOverrides="OR">
+			<foreach collection="typeArr" item="t">
+				<trim prefix="OR">
+					<if test="t == 'T'.toString()">
+					LOWER(TITLE) LIKE LOWER('%' || #{keyword} || '%')
+					</if>
+					<if test="t == 'C'.toString()">
+					LOWER(CONTENT) LIKE LOWER('%${keyword}%')
+					</if>
+					<if test="t == 'W'.toString()">
+					LOWER(WRITER) LIKE LOWER('%${keyword}%')
+					</if>
+				</trim>
+			</foreach>
+		</trim>
+		<!-- </if> -->
+	</sql>
+
+	<select id="getList" resultType="board"> <!-- CDATA안에 든거 일반 문자취급! ex)cdata없으면 < 이 연산자가 태그로 인식 -->
+		<![CDATA[
+			SELECT * FROM TBL_BOARD WHERE 0 < BNO
+		]]>
+	</select>
+
+	<select id="getListWithPaging" resultType="board"> <!-- CDATA안에 든거 일반 문자취급! ex)cdata없으면 < 이 연산자가 태그로 인식 -->
+		SELECT 
+		    * 
+		FROM (
+		    SELECT /*+ INDEX_dESC(TBL_BOARD BOARD_PK) */
+		        ROWNUM RN, 
+		        BNO,
+		        TITLE,
+		        CONTENT,
+		        WRITER,
+		        REGDATE,
+		        UPDATEDATE,
+		        REPLYCNT
+		    FROM
+		        TBL_BOARD
+		    WHERE
+		    <include refid="cri"></include>
+		    <![CDATA[
+		    ROWNUM <= #{pageNum} * #{amount}
+		)
+		WHERE RN > (#{pageNum} - 1) * #{amount}
+		]]>
+	</select>
+	
+	
+	<select id="read" resultType="board"> <!-- BoardMapper에 @select 어노테이션 대행 -->
+	<![CDATA[
+		SELECT * FROM TBL_BOARD WHERE BNO = #{bno}
+	]]>		
+	</select>
+	<insert id="insert">
+		INSERT INTO TBL_BOARD(BNO, TITLE, CONTENT, WRITER)
+		VALUES (SEQ_BOARD.NEXTVAL, #{title}, #{content}, #{writer}) <!-- #{}안에 무조건 소문자로 해야함 이제 ?하고 값 지정 안해줘도 된다! -->
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="long">
+		SELECT SEQ_BOARD.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_BOARD(BNO, TITLE, CONTENT, WRITER)
+		VALUES (#{bno}, #{title}, #{content}, #{writer})
+	</insert>
+	
+	<insert id="delete">
+		DELETE TBL_BOARD WHERE BNO = #{bno}
+	</insert>
+	
+	<insert id="update"> <!-- p.196 -->
+		UPDATE TBL_BOARD SET
+			TITLE = #{title},
+			CONTENT = #{content},
+			UPDATEDATE = SYSDATE
+		WHERE BNO = #{bno}
+	</insert>
+	
+	<select id="getTotalCount" resultType="int">
+		SELECT COUNT(*) FROM TBL_BOARD 
+		WHERE 
+		<include refid="cri"></include>		
+		BNO > 0
+	</select>
+	
+	<select id="getListDynamicTest" resultType="board">
+	<![CDATA[
+		SELECT * FROM TBL_BOARD
+	]]>
+		<!-- WHERE (
+		<if test="${type} == 'T'.toString()">
+		    TITLE LIKE '%' || #{keyword} || '%' OR 
+		</if>
+		    CONTENT LIKE '%${keyword}%'OR
+		    WIRTER LIKE '%${keyword}%'
+		) --> 
+		<!-- <where>
+			<if test="keyword != null">
+				TITLE LIKE '%' || #{keyword} || '%' AND
+			</if>
+			<trim prefix="AND">
+				ROWNUM &lt;= 10
+			</trim>
+		</where> -->
+		WHERE
+		<include refid="cri"></include>
+		ROWNUM &lt;= 3
+	</select>
+	
+	<update id="updateReplyCnt">
+		UPDATE TBL_BOARD SET REPLYCNT = REPLYCNT + #{amount} WHERE BNO = #{bno}
+	</update>
+</mapper>
